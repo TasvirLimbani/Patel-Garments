@@ -24,7 +24,7 @@ export interface Salary {
   month_year: string;
   year: string;
   month: string;
-  total_piece: string;
+  bank_name: string;
   total_salary: string;
   total_paid: string;
   total_advance: string;
@@ -124,7 +124,7 @@ export const salaries: Salary[] = [
             "month_year": "2026-04",
             "year": "2026",
             "month": "4",
-            "total_piece": "500",
+            "bank_name": "SBI",
             "total_salary": "12835.00",
             "total_paid": "9000.00",
             "total_advance": "8665.00",
@@ -136,7 +136,7 @@ export const salaries: Salary[] = [
             "month_year": "2026-04",
             "year": "2026",
             "month": "4",
-            "total_piece": "47",
+            "bank_name": "ICICI",
             "total_salary": "288.40",
             "total_paid": "400.00",
             "total_advance": "488.40",
@@ -148,7 +148,7 @@ export const salaries: Salary[] = [
             "month_year": "2026-04",
             "year": "2026",
             "month": "4",
-            "total_piece": "100",
+            "bank_name": "HDFC",
             "total_salary": "1275.00",
             "total_paid": "1400.00",
             "total_advance": "125.00",

@@ -1,155 +1,3 @@
-// 'use client';
-
-// import React, { useEffect, useState } from 'react';
-// import { useAuth } from '@/context/AuthContext';
-// import { Salary } from '@/lib/mockData';
-
-// export function SalaryPage() {
-//   const { user } = useAuth();
-
-//   const today = new Date();
-//   const currentMonth = String(today.getMonth() + 1); // 1-12
-//   const currentYear = String(today.getFullYear());
-
-//   const [salarys, setSalary] = useState<Salary[]>([]);
-
-//   // 🔥 NEW STATES
-//   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-//   const [selectedYear, setSelectedYear] = useState(currentYear);
-
-//   // FETCH
-//   const fetchSalaries = async () => {
-//     const res = await fetch('/api/salary', {
-//       cache: 'no-store',
-//     });
-
-//     const data = await res.json();
-//     setSalary(data.data);
-//   };
-
-//   useEffect(() => {
-//     fetchSalaries();
-//   }, []);
-
-//   // 🔥 FILTER LOGIC
-//   const filteredSalaries = salarys.filter((s) => {
-//     return s.month === selectedMonth && s.year === selectedYear;
-//   });
-
-//   // 🔥 MONTH OPTIONS
-//   const months = [
-//     { value: '1', label: 'Jan' },
-//     { value: '2', label: 'Feb' },
-//     { value: '3', label: 'Mar' },
-//     { value: '4', label: 'Apr' },
-//     { value: '5', label: 'May' },
-//     { value: '6', label: 'Jun' },
-//     { value: '7', label: 'Jul' },
-//     { value: '8', label: 'Aug' },
-//     { value: '9', label: 'Sep' },
-//     { value: '10', label: 'Oct' },
-//     { value: '11', label: 'Nov' },
-//     { value: '12', label: 'Dec' },
-//   ];
-
-//   // 🔥 YEAR OPTIONS (dynamic from data)
-//   const years = Array.from(new Set(salarys.map((s) => s.year)));
-
-//   return (
-//     <div className="space-y-6 animate-fade-in">
-
-//       {/* 🔥 FILTER BAR */}
-//       <div className="flex gap-4 bg-white p-4 rounded-xl shadow-md">
-
-//         <select
-//           value={selectedMonth}
-//           onChange={(e) => setSelectedMonth(e.target.value)}
-//           className="px-4 py-2 border rounded-lg"
-//         >
-//           {months.map((m) => (
-//             <option key={m.value} value={m.value}>
-//               {m.label}
-//             </option>
-//           ))}
-//         </select>
-
-//         <select
-//           value={selectedYear}
-//           onChange={(e) => setSelectedYear(e.target.value)}
-//           className="px-4 py-2 border rounded-lg"
-//         >
-//           {years.map((y) => (
-//             <option key={y} value={y}>
-//               {y}
-//             </option>
-//           ))}
-//         </select>
-
-//       </div>
-
-//       {/* TABLE */}
-//       <div className="bg-white rounded-xl shadow-md overflow-hidden">
-//         <div className="overflow-x-auto">
-//           <table className="w-full">
-//             <thead>
-//               <tr className="bg-gradient-to-r from-primary to-primary/80 text-white">
-//                 <th className="px-6 py-4 text-center text-sm font-semibold">Employee</th>
-//                 <th className="px-6 py-4 text-center text-sm font-semibold">Month</th>
-//                 <th className="px-6 py-4 text-center text-sm font-semibold">Pieces</th>
-//                 <th className="px-6 py-4 text-center text-sm font-semibold">Total Salary</th>
-//                 <th className="px-6 py-4 text-center text-sm font-semibold">Advance</th>
-//                 <th className="px-6 py-4 text-center text-sm font-semibold">Net Salary</th>
-//               </tr>
-//             </thead>
-
-//             <tbody className="divide-y divide-gray-200">
-//               {filteredSalaries.map((salary, index) => (
-//                 <tr
-//                   key={salary.employee_id}
-//                   className="hover:bg-gray-50 transition-colors duration-200 animate-fade-in text-center"
-//                   style={{ animationDelay: `${index * 50}ms` }}
-//                 >
-//                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
-//                       {salary.employee_name}
-//                   </td>
-
-//                   <td className="px-6 py-4 text-sm text-gray-600">
-//                     {salary.month}/{salary.year}
-//                   </td>
-
-//                   <td className="px-6 py-4 text-sm">
-//                     {salary.total_piece}
-//                   </td>
-
-//                   <td className="px-6 py-4 text-sm ">
-//                     ₹{salary.total_salary}
-//                   </td>
-
-//                   <td className="px-6 py-4 text-sm text-red-600">
-//                     ₹{salary.total_advance}
-//                   </td>
-
-//                   <td className="px-6 py-4 text-sm font-bold text-primary">
-//                     ₹{salary.payable}
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-
-//           {/* 🔥 EMPTY STATE */}
-//           {filteredSalaries.length === 0 && (
-//             <div className="p-6 text-center text-gray-500">
-//               No salary data for selected month/year
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -167,6 +15,8 @@ export function SalaryPage() {
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
+  const [searchTerm, setSearchTerm] = useState('');
+
   // FETCH
   const fetchSalaries = async () => {
     const res = await fetch('/api/salary', {
@@ -183,7 +33,14 @@ export function SalaryPage() {
 
   // FILTER
   const filteredSalaries = salarys.filter((s) => {
-    return s.month === selectedMonth && s.year === selectedYear;
+    const matchesSearch =
+      s.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.employee_id?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesDate =
+      s.month === selectedMonth && s.year === selectedYear;
+
+    return matchesSearch && matchesDate;
   });
 
   // MONTHS
@@ -249,30 +106,32 @@ export function SalaryPage() {
               <tr>
                 <th>ID</th>
                 <th>Employee</th>
-                <th>Pieces</th>
                 <th>Total Salary</th>
                 <th>Advance</th>
                 <th>Payable</th>
+                <th>Account No.</th>
+                <th>Bank Name</th>
                 <th>Paid</th>
               </tr>
             </thead>
 
             <tbody>
               ${filteredSalaries
-                .map(
-                  (s) => `
+        .map(
+          (s) => `
                 <tr>
                   <td>${s.employee_id}</td>
                   <td>${s.employee_name}</td>
-                  <td>${s.total_piece}</td>
                   <td>₹${s.total_salary}</td>
                   <td>₹${s.total_advance}</td>
                   <td>₹${s.payable}</td>
+                  <td>${s.account_number}</td>
+                  <td>${s.bank_name}</td>
                   <td><div class="box"></div></td>
                 </tr>
               `
-                )
-                .join('')}
+        )
+        .join('')}
             </tbody>
           </table>
         </body>
@@ -289,13 +148,15 @@ export function SalaryPage() {
     <div className="space-y-6 animate-fade-in">
 
       {/* 🔥 FILTER BAR */}
-      <div className="flex justify-between items-center bg-white p-4 rounded-xl shadow-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white p-3 sm:p-4 rounded-xl shadow-md gap-3">
 
-        <div className="flex gap-4">
+        {/* LEFT: MONTH + YEAR */}
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+
           <select
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="px-4 py-2 border rounded-lg"
+            className="w-full sm:w-auto px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           >
             {months.map((m) => (
               <option key={m.value} value={m.value}>
@@ -307,7 +168,7 @@ export function SalaryPage() {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="px-4 py-2 border rounded-lg"
+            className="w-full sm:w-auto px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
           >
             {years.map((y) => (
               <option key={y} value={y}>
@@ -315,15 +176,30 @@ export function SalaryPage() {
               </option>
             ))}
           </select>
+
         </div>
 
-        {/* 🔥 PRINT BUTTON */}
-        <button
-          onClick={handlePrint}
-          className="bg-primary text-white px-5 py-2 rounded-lg hover:opacity-90"
-        >
-          Print
-        </button>
+        {/* CENTER: SEARCH (FULL WIDTH) */}
+        <div className="flex-1 w-full">
+          <input
+            type="text"
+            placeholder="Search employee..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+          />
+        </div>
+
+        {/* RIGHT: PRINT BUTTON */}
+        <div className="w-full sm:w-auto">
+          <button
+            onClick={handlePrint}
+            className="w-full sm:w-auto bg-primary text-white px-5 py-2 rounded-lg active:scale-95 sm:hover:scale-105 transition"
+          >
+            Print
+          </button>
+        </div>
+
       </div>
 
       {/* TABLE */}
@@ -334,10 +210,11 @@ export function SalaryPage() {
               <tr className="bg-gradient-to-r from-primary to-primary/80 text-white">
                 <th className="px-6 py-4 text-center text-sm font-semibold">ID</th>
                 <th className="px-6 py-4 text-center text-sm font-semibold">Employee</th>
-                <th className="px-6 py-4 text-center text-sm font-semibold">Pieces</th>
                 <th className="px-6 py-4 text-center text-sm font-semibold">Total Salary</th>
                 <th className="px-6 py-4 text-center text-sm font-semibold">Advance</th>
                 <th className="px-6 py-4 text-center text-sm font-semibold">Payable</th>
+                <th className="px-6 py-4 text-center text-sm font-semibold">Account No.</th>
+                <th className="px-6 py-4 text-center text-sm font-semibold">Bank Name</th>
               </tr>
             </thead>
 
@@ -354,10 +231,6 @@ export function SalaryPage() {
                   </td>
 
                   <td className="px-6 py-4">
-                    {salary.total_piece}
-                  </td>
-
-                  <td className="px-6 py-4">
                     ₹{salary.total_salary}
                   </td>
 
@@ -368,6 +241,15 @@ export function SalaryPage() {
                   <td className="px-6 py-4 font-bold text-primary">
                     ₹{salary.payable}
                   </td>
+
+                  <td className="px-6 py-4">
+                    {salary.account_number}
+                  </td>
+
+                  <td className="px-6 py-4">
+                    {salary.bank_name}
+                  </td>
+
                 </tr>
               ))}
             </tbody>

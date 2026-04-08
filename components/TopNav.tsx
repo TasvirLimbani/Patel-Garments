@@ -35,6 +35,7 @@ export function TopNav({ pageTitle }: TopNavProps) {
           </div>
           <div>
             <p className="text-sm font-medium text-gray-800">{user?.name || 'User'}</p>
+            <p className="text-sm font-medium text-gray-800">{user?.email || 'user@example.com'}</p>
           </div>
         </div>
       </div>

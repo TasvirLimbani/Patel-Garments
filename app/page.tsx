@@ -181,21 +181,21 @@ export default function LoginPage() {
             </form>
 
             {/* Divider */}
-            <div className="relative my-8 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            {/* <div className="relative my-8 animate-fade-in" style={{ animationDelay: '0.5s' }}>
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-muted-foreground">Or continue as</span>
               </div>
-            </div>
+            </div> */}
 
             {/* Demo Credentials */}
-            <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            {/* <div className="bg-secondary/10 rounded-lg p-4 border border-secondary/20 animate-fade-in" style={{ animationDelay: '0.6s' }}>
               <p className="text-xs text-muted-foreground mb-2 font-semibold">Demo Credentials:</p>
               <p className="text-xs text-foreground mb-1"><strong>Email:</strong> demo@example.com</p>
               <p className="text-xs text-foreground"><strong>Password:</strong> password123</p>
-            </div>
+            </div> */}
           </Card>
 
           {/* Footer */}

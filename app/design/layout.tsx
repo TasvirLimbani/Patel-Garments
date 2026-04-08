@@ -1,41 +1,3 @@
-// 'use client';
-
-// import { useRouter, usePathname } from 'next/navigation';
-// import { useAuth } from '@/context/AuthContext';
-// import { Sidebar } from '@/components/Sidebar';
-// import { ReactNode, useEffect } from 'react';
-
-// export default function DashboardLayout({
-//   children,
-// }: {
-//   children: ReactNode;
-// }) {
-//   const router = useRouter();
-//   const pathname = usePathname();
-//   const { isLoggedIn } = useAuth();
-
-//   useEffect(() => {
-//     // Redirect to login if not authenticated
-//     if (!isLoggedIn) {
-//       router.push('/');
-//     }
-//   }, [isLoggedIn, router]);
-
-//   if (!isLoggedIn) {
-//     return null;
-//   }
-
-//   return (
-//     <div className="flex h-screen bg-gray-100">
-//       <Sidebar currentPage="dashboard" />
-//       <div className="flex-1 flex flex-col overflow-hidden">
-//         {children}
-//       </div>
-//     </div>
-//   );
-// }
-
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -44,7 +6,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { ReactNode, useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 
-export default function DashboardLayout({
+export default function EmployeesLayout({
   children,
 }: {
   children: ReactNode;
@@ -80,7 +42,7 @@ export default function DashboardLayout({
           <button onClick={() => setIsSidebarOpen(true)}>
             <Menu size={24} />
           </button>
-          <h1 className="font-semibold">Dashboard</h1>
+          <h1 className="font-semibold">Design</h1>
         </div>
 
         {/* Page Content */}

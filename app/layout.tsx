@@ -9,8 +9,12 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Employee Management System',
+  title: 'Radhe Admin HRM',
   description: 'Employee Management System with HRM Features',
+
+  manifest: '/manifest.json', // ✅ ADD THIS
+  themeColor: '#000000',     // ✅ ADD THIS
+
   icons: {
     icon: [
       { url: '/logo.png', type: 'image/png' },
@@ -27,6 +31,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+      </head>
       <body className="font-sans antialiased">
         <Providers>
           {children}

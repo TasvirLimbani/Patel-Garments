@@ -100,9 +100,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (email && password) {
       const userData = {
         id: Math.random().toString(36).substr(2, 9),
-        email,
+        email: email,
         name: email.split('@')[0],
-        token: '',
+        token: '', // You can generate a token here if needed
       };
 
       setUser(userData);

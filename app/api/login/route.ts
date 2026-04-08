@@ -15,6 +15,7 @@ export async function POST(req: Request) {
         body: JSON.stringify({
           email: body.email,
           password: body.password,
+          role: "admin"
         }),
       }
     );

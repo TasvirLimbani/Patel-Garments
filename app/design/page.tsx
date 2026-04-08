@@ -1,16 +1,16 @@
 'use client';
 
+import DesignPage from '@/components/DesignPage';
 import { TopNav } from '@/components/TopNav';
-import { SalaryPage } from '@/components/SalaryPage';
 
 export default function Page() {
   return (
     <>
-      <div className="hidden md:block">
-        <TopNav pageTitle="Salary Management" />
-      </div>
+    <div className="hidden md:block">
+      <TopNav pageTitle="Design" />
+    </div>
       <div className="flex-1 overflow-y-auto p-4 md:p-8">
-        <SalaryPage />
+        <DesignPage />
       </div>
     </>
   );
