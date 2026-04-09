@@ -34,7 +34,12 @@ export function DashboardOverview() {
   }, []);
 
   if (loading) {
-    return <div className="p-6">Loading dashboard...</div>;
+    return <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
+              </div>;
   }
 
   const summary = data?.summary || {};

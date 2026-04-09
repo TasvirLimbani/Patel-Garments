@@ -30,6 +30,7 @@ export function EmployeesPage() {
   const [selectedEmployee, setSelectedEmployee] = useState<any>(null);
   const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [employeesLoading, setEmployeesLoading] = useState(true);
 
   const getCurrentMonth = () => {
     const d = new Date();
@@ -125,9 +126,11 @@ export function EmployeesPage() {
 
   // FETCH EMPLOYEES
   const fetchEmployees = async () => {
+    setEmployeesLoading(true);
     const res = await fetch('/api/employee', { cache: 'no-store' });
     const data = await res.json();
     if (data.success) setEmployees(data.employees);
+    setEmployeesLoading(false);
   };
 
   // FETCH DETAIL
@@ -244,6 +247,17 @@ export function EmployeesPage() {
   const filteredEmployees = employees.filter((emp: any) =>
     emp.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+if (employeesLoading) {
+  return (
+    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
+              </div>
+  );
+}
 
   return (
     <div className="space-y-6">
@@ -410,17 +424,19 @@ export function EmployeesPage() {
             </div>
           </div>
 
-          {loading && (
-            <div className="fixed inset-0 backdrop-blur-xl flex items-center justify-center z-50">
-              <div className="flex flex-col items-center gap-3">
 
-                {/* Spinner */}
-                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-
-                <p className="text-sm text-gray-600">Loading data...</p>
+          <div className="flex"> {/* IMPORTANT */}
+            {loading && (
+              <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+
+            {/* Your page content */}
+          </div>
 
           {detail && (
             <>

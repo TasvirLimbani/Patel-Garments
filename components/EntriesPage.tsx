@@ -178,16 +178,26 @@ export function EntriesPage() {
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev < filteredEmployees.length - 1 ? prev + 1 : 0
-      );
+      setActiveIndex((prev) => {
+        const newIndex = prev < filteredEmployees.length - 1 ? prev + 1 : 0;
+        setTimeout(() => {
+          const element = document.getElementById(`employee-option-${newIndex}`);
+          element?.scrollIntoView({ block: 'nearest' });
+        }, 0);
+        return newIndex;
+      });
     }
 
     if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev > 0 ? prev - 1 : filteredEmployees.length - 1
-      );
+      setActiveIndex((prev) => {
+        const newIndex = prev > 0 ? prev - 1 : filteredEmployees.length - 1;
+        setTimeout(() => {
+          const element = document.getElementById(`employee-option-${newIndex}`);
+          element?.scrollIntoView({ block: 'nearest' });
+        }, 0);
+        return newIndex;
+      });
     }
 
     if (e.key === 'Enter') {
@@ -203,35 +213,25 @@ export function EntriesPage() {
         });
 
         setShowEmployeeDropdown(false);
+        setActiveIndex(-1);
       }
+    }
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowEmployeeDropdown(false);
+      setActiveIndex(-1);
     }
   };
 
-  if (loading) return <table className="min-w-[900px] w-full text-xs sm:text-sm text-center">
-    <thead className="bg-primary text-white">
-      <tr>
-        <th className="p-2 sm:p-4">Date</th>
-        <th className="p-2 sm:p-4">Employee</th>
-        <th className="p-2 sm:p-4">Operation</th>
-
-        {/* Hide less important on mobile */}
-        <th className="p-2 sm:p-4 hidden sm:table-cell">Design</th>
-        <th className="p-2 sm:p-4 hidden sm:table-cell">Colour</th>
-
-        <th className="p-2 sm:p-4">Piece</th>
-        <th className="p-2 sm:p-4">Rate</th>
-        <th className="p-2 sm:p-4">Total</th>
-        <th className="p-2 sm:p-4">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td colSpan={10} className="p-4 text-center">
-          Loading Data...
-        </td>
-      </tr>
-    </tbody>
-  </table>;
+  if (loading) return (
+              <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
+              </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -402,13 +402,16 @@ export function EntriesPage() {
                   value={form.employee_name}
                   onChange={(e) => handleEmployeeSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full border p-2 rounded"
+                  onFocus={() => form.employee_name && setShowEmployeeDropdown(true)}
+                  className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
+                  autoComplete="off"
                 />
 
                 {showEmployeeDropdown && filteredEmployees.length > 0 && (
-                  <div className="absolute w-full bg-white border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto z-50">
+                  <div className="absolute w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto z-50 top-full left-0">
                     {filteredEmployees.map((emp, index) => (
                       <div
+                        id={`employee-option-${index}`}
                         key={emp.id}
                         onClick={() => {
                           setForm({
@@ -418,11 +421,17 @@ export function EntriesPage() {
                             operation: emp.operation,
                           });
                           setShowEmployeeDropdown(false);
+                          setActiveIndex(-1);
                         }}
-                        className={`px-4 py-2 cursor-pointer ${index === activeIndex ? 'bg-green-100' : 'hover:bg-gray-100'
+                        className={`px-4 py-3 cursor-pointer border-b last:border-b-0 transition-colors ${index === activeIndex
+                            ? 'bg-green-500 text-white font-medium'
+                            : 'hover:bg-gray-100'
                           }`}
                       >
-                        {emp.name} ({emp.employee_number}) - {emp.operation}
+                        <div className="font-semibold">{emp.name}</div>
+                        <div className="text-xs opacity-75">
+                          ID: {emp.employee_number} | Op: {emp.operation}
+                        </div>
                       </div>
                     ))}
                   </div>

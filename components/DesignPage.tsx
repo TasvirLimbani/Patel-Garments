@@ -108,6 +108,17 @@ const DesignPage = () => {
     ).reduce((sum, rate) => sum + rate, 0)
     : 0;
 
+        if (loading) {
+  return (
+    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
+              </div>
+  );
+}
+
   return (
     <div className="p-6 pt-0 space-y-6 animate-fade-in">
 
@@ -171,6 +182,7 @@ const DesignPage = () => {
                     <th className="px-6 py-4">Total Piece</th>
                     <th className="px-6 py-4">Avg Rate</th>
                     <th className="px-6 py-4">Total Cost</th>
+                    {/* <th className="px-6 py-4">Actions</th> */}
                   </tr>
                 </thead>
 
@@ -194,6 +206,7 @@ const DesignPage = () => {
                       <td className="px-6 py-4 font-bold">
                         ₹{item.total_cost}
                       </td>
+                      
                     </tr>
                   ))}
 

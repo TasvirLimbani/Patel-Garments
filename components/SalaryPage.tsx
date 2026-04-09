@@ -14,18 +14,27 @@ export function SalaryPage() {
   const [salarys, setSalary] = useState<Salary[]>([]);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
+     const [employeesLoading, setEmployeesLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
 
   // FETCH
-  const fetchSalaries = async () => {
+const fetchSalaries = async () => {
+  try {
+    setEmployeesLoading(true);
+
     const res = await fetch('/api/salary', {
       cache: 'no-store',
     });
 
     const data = await res.json();
     setSalary(data.data);
-  };
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setEmployeesLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchSalaries();
@@ -143,6 +152,17 @@ export function SalaryPage() {
     win?.document.close();
     win?.print();
   };
+
+    if (employeesLoading) {
+  return (
+    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
+              </div>
+  );
+}
 
   return (
     <div className="space-y-6 animate-fade-in">

@@ -26,6 +26,7 @@ export function AdvancesPage() {
   const [employeeList, setEmployeeList] = useState<any[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<any[]>([]);
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
+   const [employeesLoading, setEmployeesLoading] = useState(true);
 
   const [activeIndex, setActiveIndex] = useState(-1);
 
@@ -43,18 +44,22 @@ export function AdvancesPage() {
     setData(json.data || []);
   };
 
-  const fetchEmployees = async () => {
-    try {
-      const res = await fetch('/api/employee');
-      const data = await res.json();
+const fetchEmployees = async () => {
+  try {
+    setEmployeesLoading(true); // start loading
 
-      if (data.success) {
-        setEmployeeList(data.employees);
-      }
-    } catch (err) {
-      console.error(err);
+    const res = await fetch('/api/employee');
+    const data = await res.json();
+
+    if (data.success) {
+      setEmployeeList(data.employees);
     }
-  };
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setEmployeesLoading(false); // stop loading (runs always)
+  }
+};
 
   useEffect(() => {
     fetchData();
@@ -180,6 +185,17 @@ export function AdvancesPage() {
       }
     }
   };
+
+  if (employeesLoading) {
+  return (
+    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+                <div className="flex flex-col items-center gap-3 pl-56">
+                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-sm text-primary">Loading data...</p>
+                </div>
+              </div>
+  );
+}
 
   return (
     <div className="space-y-6">
