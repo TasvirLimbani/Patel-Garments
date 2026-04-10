@@ -125,11 +125,12 @@ const DesignDetailPage = ({ designNo }: any) => {
                                 <img
                                     key={index}
                                     src={getImageSrc(String(img))}
-                                    onClick={() => setActiveIndex(index)}
-                                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 ${activeIndex === index
-                                        ? 'border-white'
-                                        : 'border-transparent opacity-60'
-                                        }`}
+                                    alt={`design-${index}`}
+                                    onClick={() => {
+                                        setActiveIndex(index);
+                                        setShowPreview(true);
+                                    }}
+                                    className="w-18 h-18 object-cover rounded-lg border cursor-pointer hover:scale-105 transition"
                                 />
                             ))}
                         </div>
