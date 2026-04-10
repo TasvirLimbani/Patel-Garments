@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { ChevronLeft, CloudUpload, CloudSync } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+
 const DesignDetailPage = ({ designNo }: any) => {
     const [detail, setDetail] = useState<any>(null);
     const [loading, setLoading] = useState(false);
@@ -16,6 +17,16 @@ const DesignDetailPage = ({ designNo }: any) => {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const router = useRouter();
+
+    const getImageSrc = (src: string) => {
+        if (!src) return '';
+
+        if (src.startsWith('http://') || src.startsWith('https://')) {
+            return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+        }
+
+        return src;
+    };
 
     const fetchDetail = async () => {
         setLoading(true);
@@ -113,13 +124,12 @@ const DesignDetailPage = ({ designNo }: any) => {
                             {images.map((img, index) => (
                                 <img
                                     key={index}
-                                    src={img}
-                                    alt={`design-${index}`}
-                                    onClick={() => {
-                                        setActiveIndex(index);
-                                        setShowPreview(true);
-                                    }}
-                                    className="w-18 h-18 object-cover rounded-lg border cursor-pointer hover:scale-105 transition"
+                                    src={getImageSrc(String(img))}
+                                    onClick={() => setActiveIndex(index)}
+                                    className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 ${activeIndex === index
+                                        ? 'border-white'
+                                        : 'border-transparent opacity-60'
+                                        }`}
                                 />
                             ))}
                         </div>
@@ -202,7 +212,7 @@ const DesignDetailPage = ({ designNo }: any) => {
                     {/* 🔥 BIG IMAGE */}
                     {images.length > 0 && (
                         <img
-                            src={images[activeIndex]}
+                            src={getImageSrc(String(images[activeIndex]))}
                             className="max-h-[70vh] max-w-[90%] rounded-xl shadow-lg"
                         />
                     )}
@@ -212,7 +222,7 @@ const DesignDetailPage = ({ designNo }: any) => {
                         {images.map((img, index) => (
                             <img
                                 key={index}
-                                src={img}
+                                src={getImageSrc(String(img))}
                                 onClick={() => setActiveIndex(index)}
                                 className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 ${activeIndex === index
                                     ? 'border-white'
