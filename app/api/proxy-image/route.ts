@@ -1,39 +1,27 @@
-import { NextResponse } from 'next/server';
-
-const ALLOWED_HOSTS = new Set(['shikhagarments.soon.it']);
-
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const url = searchParams.get('url');
+    const imageUrl = searchParams.get("url");
 
-    if (!url) {
-      return NextResponse.json({ status: false, message: 'Missing image URL' }, { status: 400 });
+    if (!imageUrl) {
+      return new Response("Missing URL", { status: 400 });
     }
 
-    const remoteUrl = new URL(url);
+    const res = await fetch(imageUrl);
 
-    if (!ALLOWED_HOSTS.has(remoteUrl.hostname)) {
-      return NextResponse.json({ status: false, message: 'Host not allowed' }, { status: 403 });
+    if (!res.ok) {
+      return new Response("Failed to fetch image", { status: 500 });
     }
 
-    const remoteResponse = await fetch(remoteUrl.toString(), { cache: 'no-store' });
+    const buffer = await res.arrayBuffer();
 
-    if (!remoteResponse.ok || !remoteResponse.body) {
-      return NextResponse.json({ status: false, message: 'Failed to load image' }, { status: 502 });
-    }
-
-    const headers = new Headers();
-    const contentType = remoteResponse.headers.get('content-type');
-    if (contentType) headers.set('content-type', contentType);
-
-    headers.set('cache-control', remoteResponse.headers.get('cache-control') ?? 'public, max-age=3600');
-
-    return new Response(remoteResponse.body, {
-      status: remoteResponse.status,
-      headers,
+    return new Response(buffer, {
+      headers: {
+        "Content-Type": res.headers.get("content-type") || "image/png",
+        "Cache-Control": "public, max-age=31536000, immutable",
+      },
     });
   } catch (error) {
-    return NextResponse.json({ status: false, message: 'Invalid image URL' }, { status: 400 });
+    return new Response("Error fetching image", { status: 500 });
   }
 }

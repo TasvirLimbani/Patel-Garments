@@ -124,7 +124,7 @@ const DesignDetailPage = ({ designNo }: any) => {
                             {images.map((img, index) => (
                                 <img
                                     key={index}
-                                    src={getImageSrc(String(img))}
+                                    src={`/api/proxy-image?url=${encodeURIComponent(img)}`}
                                     alt={`design-${index}`}
                                     onClick={() => {
                                         setActiveIndex(index);
@@ -213,7 +213,7 @@ const DesignDetailPage = ({ designNo }: any) => {
                     {/* 🔥 BIG IMAGE */}
                     {images.length > 0 && (
                         <img
-                            src={getImageSrc(String(images[activeIndex]))}
+                            src={`/api/proxy-image?url=${encodeURIComponent(images[activeIndex])}`}
                             className="max-h-[70vh] max-w-[90%] rounded-xl shadow-lg"
                         />
                     )}
@@ -223,7 +223,7 @@ const DesignDetailPage = ({ designNo }: any) => {
                         {images.map((img, index) => (
                             <img
                                 key={index}
-                                src={getImageSrc(String(img))}
+                                src={`/api/proxy-image?url=${encodeURIComponent(img)}`}
                                 onClick={() => setActiveIndex(index)}
                                 className={`w-20 h-20 object-cover rounded-lg cursor-pointer border-2 ${activeIndex === index
                                     ? 'border-white'
