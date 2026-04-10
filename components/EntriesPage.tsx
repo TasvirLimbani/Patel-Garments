@@ -40,6 +40,9 @@ export function EntriesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
 
+  const [deleteEntry, setDeleteEntry] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
     employee_name: '',
@@ -81,7 +84,8 @@ export function EntriesPage() {
     // 🔍 search filter
     const matchesSearch =
       entry.employee_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      entry.employee_id?.toLowerCase().includes(searchTerm.toLowerCase());
+      entry.employee_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      entry.design_no?.toLowerCase().includes(searchTerm.toLowerCase());
 
     // 📅 date filter
     let matchesDate = false;
@@ -161,16 +165,24 @@ export function EntriesPage() {
     setShowModal(true);
   };
 
-  const handleDelete = async (entry: any) => {
-    if (!confirm('Are you sure to delete?')) return;
+  const handleDelete = async () => {
+    if (!deleteEntry) return;
 
-    await fetch(`/api/entries/${entry.id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: entry.id }),
-    });
+    try {
+      await fetch(`/api/entries/${deleteEntry.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: deleteEntry.id }),
+      });
 
-    fetchEntries();
+      setShowDeleteModal(false);
+      setDeleteEntry(null);
+
+      fetchEntries();
+
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -225,12 +237,12 @@ export function EntriesPage() {
   };
 
   if (loading) return (
-              <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
-                <div className="flex flex-col items-center gap-3 pl-56">
-                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm text-primary">Loading data...</p>
-                </div>
-              </div>
+    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+      <div className="flex flex-col items-center gap-3 pl-56">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-sm text-primary">Loading data...</p>
+      </div>
+    </div>
   );
 
   return (
@@ -303,6 +315,7 @@ export function EntriesPage() {
             <thead className="bg-primary text-white">
               <tr>
                 <th className="p-2 sm:p-4">Date</th>
+                <th className="p-2 sm:p-4">ID</th>
                 <th className="p-2 sm:p-4">Employee</th>
                 <th className="p-2 sm:p-4">Operation</th>
 
@@ -322,6 +335,8 @@ export function EntriesPage() {
                 <tr key={entry.id} className="border-t text-center">
                   <td className="p-2 sm:p-4 whitespace-nowrap">{entry.date}</td>
 
+                  <td className="p-2 sm:p-4">{entry.employee_id}</td>
+
                   <td className="p-2 sm:p-4 truncate max-w-[120px] sm:max-w-none">
                     {entry.employee_name}
                   </td>
@@ -340,7 +355,7 @@ export function EntriesPage() {
                   </td>
 
                   {/* ACTION */}
-                  <td className="p-2 sm:p-4 flex justify-center align-middle">
+                  <td className="p-2 sm:p-4 flex justify-center align-middle relative">
                     <button
                       onClick={() =>
                         setOpenMenu(openMenu === Number(entry.id) ? null : Number(entry.id))
@@ -351,7 +366,7 @@ export function EntriesPage() {
                     </button>
 
                     {openMenu === Number(entry.id) && (
-                      <div className="absolute right-2 mt-7 w-36 bg-white border rounded-lg shadow-lg">
+                      <div className="absolute right-2 mt-7 w-36 bg-white border rounded-lg shadow-lg z-1">
                         <button
                           onClick={() => {
                             handleEdit(entry);
@@ -364,8 +379,9 @@ export function EntriesPage() {
 
                         <button
                           onClick={() => {
-                            handleDelete(entry);
-                            setOpenMenu(null);
+                            setDeleteEntry(entry);
+                            setShowDeleteModal(true);
+                            setOpenMenu(null); // close dropdown
                           }}
                           className="block w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-red-50"
                         >
@@ -424,8 +440,8 @@ export function EntriesPage() {
                           setActiveIndex(-1);
                         }}
                         className={`px-4 py-3 cursor-pointer border-b last:border-b-0 transition-colors ${index === activeIndex
-                            ? 'bg-green-500 text-white font-medium'
-                            : 'hover:bg-gray-100'
+                          ? 'bg-green-500 text-white font-medium'
+                          : 'hover:bg-gray-100'
                           }`}
                       >
                         <div className="font-semibold">{emp.name}</div>
@@ -482,6 +498,41 @@ export function EntriesPage() {
                 style={{ background: '#00885a' }}
               >
                 {editData ? 'Update' : 'Add'}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm space-y-4 text-center">
+
+            <h2 className="text-lg font-semibold text-gray-800">
+              Delete Entry?
+            </h2>
+
+            <p className="text-sm text-gray-500">
+              Are you sure you want to delete this entry?
+            </p>
+
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteEntry(null);
+                }}
+                className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+              >
+                Delete
               </button>
             </div>
 

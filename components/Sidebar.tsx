@@ -27,10 +27,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
     { id: 'employees', label: 'Employees', icon: Users, href: '/employees' },
+    { id: 'design', label: 'Design', icon: PencilRuler, href: '/design' },
     { id: 'entries', label: 'Work Entries', icon: LogIn, href: '/entries' },
     { id: 'advances', label: 'Advances', icon: TrendingUp, href: '/advances' },
     { id: 'salary', label: 'Salary', icon: DollarSign, href: '/salary' },
-    { id: 'design', label: 'Design', icon: PencilRuler, href: '/design' },
   ];
 
   const handleLogout = () => {

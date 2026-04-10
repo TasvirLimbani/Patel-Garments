@@ -35,15 +35,16 @@ export function DashboardOverview() {
 
   if (loading) {
     return <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
-                <div className="flex flex-col items-center gap-3 pl-56">
-                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm text-primary">Loading data...</p>
-                </div>
-              </div>;
+      <div className="flex flex-col items-center gap-3 pl-56">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-sm text-primary">Loading data...</p>
+      </div>
+    </div>;
   }
 
   const summary = data?.summary || {};
-  const topEmployees = data?.top_5_employees || [];
+  const monthData = [...(data?.month_data || [])].reverse();
+  const originalMonthData = data?.month_data || [];
   const graphDataRaw = data?.last_7_days_graph || [];
 
   // 🔥 Format graph data properly
@@ -94,6 +95,17 @@ export function DashboardOverview() {
     },
   ];
 
+  const monthGraphData = originalMonthData.map((m: any) => {
+    const [month, year] = m.label.split('-');
+
+    return {
+      name: new Date(year, month - 1).toLocaleString('en-IN', {
+        month: 'short',
+      }),
+      amount: Number(m.data),
+    };
+  });
+
   return (
     <div className="space-y-6">
 
@@ -122,45 +134,73 @@ export function DashboardOverview() {
       {/* 🔥 TOP EMPLOYEES + GRAPH SIDE BY SIDE */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-        {/* 🔥 TOP EMPLOYEES */}
+        {/* 📅 MONTH DATA TABLE */}
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h3 className="text-lg font-bold mb-4">Top Employees</h3>
+          <h3 className="text-lg font-bold mb-4">Monthly Overview</h3>
 
-          <div className="space-y-3">
-            {topEmployees.length === 0 && <p>No data</p>}
+          {monthData.length === 0 ? (
+            <p>No data</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-            {topEmployees.map((emp: any) => (
-              <div
-                key={emp.employee_id}
-                className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
-              >
-                <div>
-                  <p className="font-medium">{emp.employee_name}</p>
-                  <p className="text-sm text-gray-500">
-                    Rank #{emp.rank}
-                  </p>
-                </div>
-
-                <div className="font-bold text-primary">
-                  ₹{emp.total_salary}
-                </div>
+              {/* LEFT SIDE (first 6 months) */}
+              <div className="space-y-3">
+                {monthData.slice(0, 6).map((item: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-lg"
+                  >
+                    <span className="font-medium">
+                      {new Date(item.label.split('-')[1], item.label.split('-')[0] - 1)
+                        .toLocaleString('en-IN', {
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                    </span>
+                    <span className="font-bold text-primary">
+                      Pcs. {Number(item.data).toFixed(0)}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+
+              {/* RIGHT SIDE (last 6 months) */}
+              <div className="space-y-3">
+                {monthData.slice(6, 12).map((item: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-lg"
+                  >
+                    <span className="font-medium">
+                      {new Date(item.label.split('-')[1], item.label.split('-')[0] - 1)
+                        .toLocaleString('en-IN', {
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                    </span>
+                    <span className="font-bold text-primary">
+                      Pcs. {Number(item.data).toFixed(0)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          )}
         </div>
 
         {/* 📊 GRAPH */}
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h3 className="text-lg font-bold mb-4">Last 7 Days Performance</h3>
+          <h3 className="text-lg font-bold mb-4">Last 12 Months Performance</h3>
 
           {graphData.length === 0 ? (
             <p>No graph data</p>
           ) : (
             <div style={{ width: '100%', height: 300 }}>
               <ResponsiveContainer>
-                <LineChart data={graphData}>
+                <LineChart data={monthGraphData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+                  <XAxis dataKey="name" />
                   <YAxis />
                   <Tooltip />
 
@@ -169,13 +209,6 @@ export function DashboardOverview() {
                     dataKey="amount"
                     stroke="#6366f1"
                     strokeWidth={3}
-                  />
-
-                  <Line
-                    type="monotone"
-                    dataKey="pieces"
-                    stroke="#10b981"
-                    strokeWidth={2}
                   />
                 </LineChart>
               </ResponsiveContainer>

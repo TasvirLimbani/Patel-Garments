@@ -3,16 +3,16 @@ import { NextResponse } from 'next/server';
 const BASE_URL = 'http://shikhagarments.soon.it/api/design';
 
 // 👉 GET DETAIL
-export async function POST(req: Request) {
+export async function GET(req: Request) {
   try {
-    const body = await req.json();
+    const { searchParams } = new URL(req.url);
+    const design_no = searchParams.get('design_no');
 
-    const res = await fetch(`${BASE_URL}/get.php`, {
-      method: 'POST',
+    const res = await fetch(`${BASE_URL}/get.php?design_no=${design_no}`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
     });
 
     const data = await res.json();

@@ -26,9 +26,12 @@ export function AdvancesPage() {
   const [employeeList, setEmployeeList] = useState<any[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<any[]>([]);
   const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
-   const [employeesLoading, setEmployeesLoading] = useState(true);
+  const [employeesLoading, setEmployeesLoading] = useState(true);
 
   const [activeIndex, setActiveIndex] = useState(-1);
+
+  const [deleteAdvance, setDeleteAdvance] = useState<Advance | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [form, setForm] = useState({
     date: today,
@@ -44,22 +47,22 @@ export function AdvancesPage() {
     setData(json.data || []);
   };
 
-const fetchEmployees = async () => {
-  try {
-    setEmployeesLoading(true); // start loading
+  const fetchEmployees = async () => {
+    try {
+      setEmployeesLoading(true); // start loading
 
-    const res = await fetch('/api/employee');
-    const data = await res.json();
+      const res = await fetch('/api/employee');
+      const data = await res.json();
 
-    if (data.success) {
-      setEmployeeList(data.employees);
+      if (data.success) {
+        setEmployeeList(data.employees);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setEmployeesLoading(false); // stop loading (runs always)
     }
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setEmployeesLoading(false); // stop loading (runs always)
-  }
-};
+  };
 
   useEffect(() => {
     fetchData();
@@ -138,17 +141,28 @@ const fetchEmployees = async () => {
     setShowModal(true);
   };
 
-  const handleDelete = async (item: Advance) => {
-    if (!confirm('Are you sure you want to delete?')) return;
+  const handleDelete = async () => {
+    if (!deleteAdvance) return;
 
-    const res = await fetch(`/api/advance/${item.id}?id=${item.id}`, {
-      method: 'DELETE',
-    });
+    try {
+      const res = await fetch(
+        `/api/advance/${deleteAdvance.id}?id=${deleteAdvance.id}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (result.status === 'success') {
-      fetchData();
+      if (result.status === 'success') {
+        fetchData();
+      }
+
+      setShowDeleteModal(false);
+      setDeleteAdvance(null);
+
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -187,15 +201,15 @@ const fetchEmployees = async () => {
   };
 
   if (employeesLoading) {
-  return (
-    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
-                <div className="flex flex-col items-center gap-3 pl-56">
-                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm text-primary">Loading data...</p>
-                </div>
-              </div>
-  );
-}
+    return (
+      <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+        <div className="flex flex-col items-center gap-3 pl-56">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-primary">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -252,8 +266,8 @@ const fetchEmployees = async () => {
           <table className="min-w-[500px] w-full text-xs sm:text-sm text-center">
             <thead className="bg-primary text-white">
               <tr>
-                <th className="p-2 sm:p-4">ID</th>
                 <th className="p-2 sm:p-4">Date</th>
+                <th className="p-2 sm:p-4">ID</th>
                 <th className="p-2 sm:p-4">Employee</th>
                 <th className="p-2 sm:p-4">Amount</th>
                 <th className="p-2 sm:p-4">Reason</th>
@@ -267,11 +281,11 @@ const fetchEmployees = async () => {
                   <tr key={entry.id} className="border-t text-center">
 
                     <td className="p-2 sm:p-4 whitespace-nowrap">
-                      {entry.employee_id}
+                      {entry.date}
                     </td>
 
                     <td className="p-2 sm:p-4 whitespace-nowrap">
-                      {entry.date}
+                      {entry.employee_id}
                     </td>
 
                     <td className="p-2 sm:p-4 truncate max-w-[120px] sm:max-w-none">
@@ -310,7 +324,8 @@ const fetchEmployees = async () => {
 
                           <button
                             onClick={() => {
-                              handleDelete(entry);
+                              setDeleteAdvance(entry);
+                              setShowDeleteModal(true);
                               setOpenMenu(null);
                             }}
                             className="block w-full px-3 py-2 text-left text-sm text-red-500 hover:bg-red-50"
@@ -430,6 +445,41 @@ const fetchEmployees = async () => {
                 style={{ background: '#00885a' }}
               >
                 {editData ? 'Update' : 'Add'}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm space-y-4 text-center">
+
+            <h2 className="text-lg font-semibold text-gray-800">
+              Delete Advance?
+            </h2>
+
+            <p className="text-sm text-gray-500">
+              Are you sure you want to delete this advance entry?
+            </p>
+
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteAdvance(null);
+                }}
+                className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+              >
+                Delete
               </button>
             </div>
 

@@ -32,6 +32,9 @@ export function EmployeesPage() {
   const [loading, setLoading] = useState(false);
   const [employeesLoading, setEmployeesLoading] = useState(true);
 
+  const [deleteEmployee, setDeleteEmployee] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const getCurrentMonth = () => {
     const d = new Date();
     return d.toISOString().slice(0, 7); // "YYYY-MM"
@@ -205,15 +208,28 @@ export function EmployeesPage() {
   };
 
   // DELETE
-  const handleDelete = async (emp: any) => {
-    if (!confirm('Are you sure?')) return;
+  const handleDelete = async () => {
+    if (!deleteEmployee) return;
 
-    await fetch(`/api/employee/delete?employee_number=${emp.employee_number}`, {
-      method: 'DELETE',
-    });
+    try {
+      await fetch(
+        `/api/employee/delete?employee_number=${deleteEmployee.employee_number}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
-    toast.success('Deleted');
-    fetchEmployees();
+      toast.success('Deleted successfully');
+
+      setShowDeleteModal(false);
+      setDeleteEmployee(null);
+
+      fetchEmployees();
+
+    } catch (error) {
+      console.error(error);
+      toast.error('Delete failed');
+    }
   };
 
   // SUBMIT
@@ -245,19 +261,19 @@ export function EmployeesPage() {
   };
 
   const filteredEmployees = employees.filter((emp: any) =>
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase())
+    emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || emp.employee_number.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-if (employeesLoading) {
-  return (
-    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
-                <div className="flex flex-col items-center gap-3 pl-56">
-                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm text-primary">Loading data...</p>
-                </div>
-              </div>
-  );
-}
+  if (employeesLoading) {
+    return (
+      <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+        <div className="flex flex-col items-center gap-3 pl-56">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-primary">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -322,13 +338,14 @@ if (employeesLoading) {
                       <td>{emp.bank_name}</td>
                       <td
                         onClick={(e) => e.stopPropagation()}
-                        className="flex justify-center align-middle p-4"
+                        className="flex justify-center align-middle p-4 "
                       >
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setOpenMenu(openMenu === emp.id ? null : emp.id);
                           }}
+                          hitslop
                         >
                           ⋮
                         </button>
@@ -350,7 +367,8 @@ if (employeesLoading) {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleDelete(emp);
+                                setDeleteEmployee(emp);
+                                setShowDeleteModal(true);
                                 setOpenMenu(null);
                               }}
                               className="block w-full p-2 text-red-500 hover:bg-red-50"
@@ -568,6 +586,45 @@ if (employeesLoading) {
                 Save
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm space-y-4 text-center">
+
+            <h2 className="text-lg font-semibold text-gray-800">
+              Delete Employee?
+            </h2>
+
+            <p className="text-sm text-gray-500">
+              Are you sure you want to delete employee{" "}
+              <span className="font-semibold text-primary">
+                {deleteEmployee?.employee_number}
+              </span>
+              ?
+            </p>
+
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteEmployee(null);
+                }}
+                className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+
           </div>
         </div>
       )}

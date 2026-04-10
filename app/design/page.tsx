@@ -1,6 +1,6 @@
 'use client';
 
-import DesignPage from '@/components/DesignPage';
+import DesignPage from '@/components/DesignListPage';
 import { TopNav } from '@/components/TopNav';
 
 export default function Page() {
