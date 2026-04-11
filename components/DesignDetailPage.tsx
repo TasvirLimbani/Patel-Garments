@@ -160,7 +160,29 @@ const DesignDetailPage = ({ designNo }: any) => {
                                             {entry.employee_name}
                                         </td>
                                         <td className="px-6 py-4">{entry.operation}</td>
-                                        <td className="px-6 py-4">{entry.piece}</td>
+                                        <td className="px-6 py-4">
+                                            {(() => {
+                                                const totalPiece = detail.design.total_piece;
+                                                const diff = totalPiece - entry.piece;
+
+                                                if (entry.piece === totalPiece) {
+                                                    return (
+                                                        <span className="text-green-600 font-semibold">
+                                                            {entry.piece}
+                                                        </span>
+                                                    );
+                                                }
+
+                                                return (
+                                                    <span className="text-red-600 font-semibold">
+                                                        {entry.piece}
+                                                        <span className="ml-2 text-xs font-normal">
+                                                            (-{diff})
+                                                        </span>
+                                                    </span>
+                                                );
+                                            })()}
+                                        </td>
                                         <td className="px-6 py-4">₹{entry.rate}</td>
                                         <td className="px-6 py-4 font-semibold">
                                             ₹{entry.operation_cost}

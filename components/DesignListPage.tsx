@@ -122,6 +122,7 @@ const DesignPage = () => {
     setForm({
       date: new Date().toISOString().split('T')[0],
       design_number: '',
+      color: '',
       piece: '',
 
     });
@@ -133,6 +134,7 @@ const DesignPage = () => {
     setForm({
       date: entry.date,
       design_number: entry.design_number,
+      color: entry.color,
       piece: entry.piece,
     });
     setShowModal(true);
@@ -143,6 +145,7 @@ const DesignPage = () => {
       const formData = new FormData();
 
       formData.append('design_number', form.design_number);
+      formData.append('color', form.color);
       formData.append('piece', form.piece);
       formData.append('date', form.date);
 
@@ -346,6 +349,7 @@ const DesignPage = () => {
                   <tr>
                     <th className="px-6 py-4">Date</th>
                     <th className="px-6 py-4">Design No</th>
+                    <th className="px-6 py-4">Colour</th>
                     <th className="px-6 py-4">Total Piece</th>
                     <th className="px-6 py-4">OutPut Piece</th>
                     <th className="px-6 py-4">Remaining Piece</th>
@@ -367,6 +371,7 @@ const DesignPage = () => {
                       <td className="px-6 py-4 font-semibold text-primary">
                         {item.design_number}
                       </td>
+                      <td className="px-6 py-4">{item.color}</td>
                       <td className="px-6 py-4">{item.piece}</td>
                       <td className="px-6 py-4">{item.output_piece}</td>
                       <td className="px-6 py-4 font-bold">
@@ -448,6 +453,13 @@ const DesignPage = () => {
                 value={form.piece}
                 onChange={(e) => setForm({ ...form, piece: e.target.value })}
                 className="w-full border p-2 rounded" />
+
+              <input placeholder="Colour"
+                value={form.color}
+                onChange={(e) => setForm({ ...form, color: e.target.value })}
+                className="w-full border p-2 rounded" 
+                type='number'/>
+
               <div>
                 <h1 className="text-md font-bold text-primary/70">Images</h1>
               </div>

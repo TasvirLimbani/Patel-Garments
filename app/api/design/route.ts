@@ -31,6 +31,7 @@ export async function POST(req: Request) {
     apiFormData.append('design_number', formData.get('design_number') as string);
     apiFormData.append('piece', formData.get('piece') as string);
     apiFormData.append('date', formData.get('date') as string);
+    apiFormData.append('color', formData.get('color') as string);
 
     // File fields
     const image1 = formData.get('image1') as File;

@@ -78,8 +78,13 @@ export function AdvancesPage() {
   });
 
   const handleEmployeeSearch = (value: string) => {
-    setForm({ ...form, employee_name: value });
-    setActiveIndex(-1); // 👈 important
+    setForm({
+      ...form,
+      employee_id: value,
+      employee_name: '', // clear old name
+    });
+
+    setActiveIndex(-1);
 
     if (!value) {
       setShowEmployeeDropdown(false);
@@ -87,7 +92,7 @@ export function AdvancesPage() {
     }
 
     const filtered = employeeList.filter((emp) =>
-      emp.name.toLowerCase().includes(value.toLowerCase())
+      emp.employee_number.toLowerCase().includes(value.toLowerCase())
     );
 
     setFilteredEmployees(filtered);
@@ -171,16 +176,36 @@ export function AdvancesPage() {
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev < filteredEmployees.length - 1 ? prev + 1 : 0
-      );
+      setActiveIndex((prev) => {
+        const newIndex =
+          prev < filteredEmployees.length - 1 ? prev + 1 : 0;
+
+        setTimeout(() => {
+          const element = document.getElementById(
+            `employee-option-${newIndex}`
+          );
+          element?.scrollIntoView({ block: 'nearest' });
+        }, 0);
+
+        return newIndex;
+      });
     }
 
     if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIndex((prev) =>
-        prev > 0 ? prev - 1 : filteredEmployees.length - 1
-      );
+      setActiveIndex((prev) => {
+        const newIndex =
+          prev > 0 ? prev - 1 : filteredEmployees.length - 1;
+
+        setTimeout(() => {
+          const element = document.getElementById(
+            `employee-option-${newIndex}`
+          );
+          element?.scrollIntoView({ block: 'nearest' });
+        }, 0);
+
+        return newIndex;
+      });
     }
 
     if (e.key === 'Enter') {
@@ -196,7 +221,14 @@ export function AdvancesPage() {
         });
 
         setShowEmployeeDropdown(false);
+        setActiveIndex(-1); // (optional but better UX)
       }
+    }
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      setShowEmployeeDropdown(false);
+      setActiveIndex(-1);
     }
   };
 
@@ -372,19 +404,21 @@ export function AdvancesPage() {
 
               <div className="relative">
                 <input
-                  placeholder="Employee Name"
-                  value={form.employee_name}
+                  placeholder="Employee ID"
+                  value={form.employee_id}
                   onChange={(e) =>
                     handleEmployeeSearch(e.target.value)
                   }
                   onKeyDown={handleKeyDown}
+                  onFocus={() => form.employee_id && setShowEmployeeDropdown(true)}
                   className="w-full border p-2 rounded"
                 />
 
                 {showEmployeeDropdown && filteredEmployees.length > 0 && (
-                  <div className="absolute w-full bg-white border rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto z-50">
+                  <div className="absolute w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto z-50 top-full left-0">
                     {filteredEmployees.map((emp, index) => (
                       <div
+                        id={`employee-option-${index}`}
                         key={emp.id}
                         onClick={() => {
                           setForm({
@@ -393,11 +427,17 @@ export function AdvancesPage() {
                             employee_id: emp.employee_number,
                           });
                           setShowEmployeeDropdown(false);
+                          setActiveIndex(-1);
                         }}
-                        className={`px-4 py-2 cursor-pointer ${index === activeIndex ? 'bg-green-100' : 'hover:bg-gray-100'
+                        className={`px-4 py-3 cursor-pointer border-b last:border-b-0 transition-colors ${index === activeIndex
+                          ? 'bg-green-500 text-white font-medium'
+                          : 'hover:bg-gray-100'
                           }`}
                       >
-                        {emp.name} ({emp.employee_number})
+                        <div className="font-semibold">{emp.name}</div>
+                        <div className="text-xs opacity-75">
+                          ID: {emp.employee_number} | Op: {emp.operation}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -405,8 +445,8 @@ export function AdvancesPage() {
               </div>
 
               <input
-                placeholder="Employee ID"
-                value={form.employee_id}
+                placeholder="Employee Name"
+                value={form.employee_name}
                 readOnly
                 className="w-full border p-2 rounded bg-gray-100"
               />

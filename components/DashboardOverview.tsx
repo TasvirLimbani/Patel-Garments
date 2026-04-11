@@ -132,7 +132,7 @@ export function DashboardOverview() {
       </div>
 
       {/* 🔥 TOP EMPLOYEES + GRAPH SIDE BY SIDE */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[40%_60%] gap-6">
 
         {/* 📅 MONTH DATA TABLE */}
         <div className="bg-white p-6 rounded-xl shadow-md">
@@ -141,50 +141,53 @@ export function DashboardOverview() {
           {monthData.length === 0 ? (
             <p>No data</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left border-collapse">
+                {/* Header */}
+                <thead>
+                  <tr className="bg-gray-100 text-gray-700">
+                    <th className="p-3 rounded-l-lg">Month</th>
+                    <th className="p-3 text-center">Input-Shirts</th>
+                    <th className="p-3 text-center">Output Shirts</th>
+                  </tr>
+                </thead>
 
-              {/* LEFT SIDE (first 6 months) */}
-              <div className="space-y-3">
-                {monthData.slice(0, 6).map((item: any, index: number) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-lg"
-                  >
-                    <span className="font-medium">
-                      {new Date(item.label.split('-')[1], item.label.split('-')[0] - 1)
-                        .toLocaleString('en-IN', {
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                    </span>
-                    <span className="font-bold text-primary">
-                      Pcs. {Number(item.data).toFixed(0)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                {/* Body */}
+                <tbody className="space-y-2">
+                  {monthData.map((item: any, index: number) => {
+                    const input = Number(item.design_piece);
+                    const output = Number(item.press_piece);
 
-              {/* RIGHT SIDE (last 6 months) */}
-              <div className="space-y-3">
-                {monthData.slice(6, 12).map((item: any, index: number) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center px-3 py-2 bg-gray-50 rounded-lg"
-                  >
-                    <span className="font-medium">
-                      {new Date(item.label.split('-')[1], item.label.split('-')[0] - 1)
-                        .toLocaleString('en-IN', {
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                    </span>
-                    <span className="font-bold text-primary">
-                      Pcs. {Number(item.data).toFixed(0)}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                    return (
+                      <tr
+                        key={index}
+                        className="bg-white shadow-sm rounded-lg"
+                      >
+                        {/* Month */}
+                        <td className="p-3 font-medium">
+                          {new Date(
+                            item.label.split('-')[1],
+                            item.label.split('-')[0] - 1
+                          ).toLocaleString('en-IN', {
+                            month: 'long',
+                            year: 'numeric',
+                          })}
+                        </td>
 
+                        {/* Input */}
+                        <td className="p-3 text-center font-semibold text-blue-600">
+                          {input.toFixed(0)}
+                        </td>
+
+                        {/* Output */}
+                        <td className="p-3 text-center font-semibold text-purple-600">
+                          {output.toFixed(0)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
@@ -214,31 +217,33 @@ export function DashboardOverview() {
               </ResponsiveContainer>
             </div>
           )}
+
+          <h1 className='text-lg font-bold mb-4'>Last Month Stats</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {LastMonthStats.map((stat) => {
+              const Icon = stat.icon;
+
+              return (
+                <div
+                  key={stat.label}
+                  className="bg-white p-6 rounded-xl shadow-md border-l-4 border-primary"
+                >
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <p className="text-gray-600 text-sm">{stat.label}</p>
+                      <p className="text-2xl font-bold mt-2">{stat.value}</p>
+                    </div>
+                    <Icon size={26} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Last Month */}
-      <h1 className='text-lg font-bold mb-4'>Last Month Stats</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {LastMonthStats.map((stat) => {
-          const Icon = stat.icon;
 
-          return (
-            <div
-              key={stat.label}
-              className="bg-white p-6 rounded-xl shadow-md border-l-4 border-primary"
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="text-gray-600 text-sm">{stat.label}</p>
-                  <p className="text-2xl font-bold mt-2">{stat.value}</p>
-                </div>
-                <Icon size={26} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

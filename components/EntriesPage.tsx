@@ -15,8 +15,8 @@ const operations = [
   'Side Munda',
   'Side Pocket',
   'Bottom',
-  'Press',
   'Gaj Button',
+  'Press',
 ];
 
 export function EntriesPage() {
@@ -100,8 +100,9 @@ export function EntriesPage() {
   });
 
   const handleEmployeeSearch = (value: string) => {
-    setForm({ ...form, employee_name: value });
-    setActiveIndex(-1); // 👈 reset selection
+    setForm({ ...form, employee_id: value }); // ✅ correct
+
+    setActiveIndex(-1);
 
     if (!value) {
       setShowEmployeeDropdown(false);
@@ -109,7 +110,7 @@ export function EntriesPage() {
     }
 
     const filtered = employeeList.filter((emp) =>
-      emp.name.toLowerCase().includes(value.toLowerCase())
+      emp.employee_number.toLowerCase().includes(value.toLowerCase())
     );
 
     setFilteredEmployees(filtered);
@@ -414,11 +415,13 @@ export function EntriesPage() {
 
               <div className="relative">
                 <input
-                  placeholder="Employee Name"
-                  value={form.employee_name}
+                  // placeholder="Employee Name"
+                  // value={form.employee_name}
+                  placeholder="Employee ID"
+                  value={form.employee_id}
                   onChange={(e) => handleEmployeeSearch(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  onFocus={() => form.employee_name && setShowEmployeeDropdown(true)}
+                  onFocus={() => form.employee_id && setShowEmployeeDropdown(true)}
                   className="w-full border p-2 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
                   autoComplete="off"
                 />
@@ -454,7 +457,11 @@ export function EntriesPage() {
                 )}
               </div>
 
-              <input placeholder="Employee ID" value={form.employee_id}
+              <input
+                // placeholder="Employee ID"
+                // value={form.employee_id}
+                placeholder="Employee Name"
+                value={form.employee_name}
                 className="w-full border p-2 rounded" readOnly />
 
               <select
