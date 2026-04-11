@@ -102,7 +102,8 @@ export function DashboardOverview() {
       name: new Date(year, month - 1).toLocaleString('en-IN', {
         month: 'short',
       }),
-      amount: Number(m.data),
+      design: Number(m.design_piece || 0),
+      press: Number(m.press_piece || 0),
     };
   });
 
@@ -209,9 +210,18 @@ export function DashboardOverview() {
 
                   <Line
                     type="monotone"
-                    dataKey="amount"
-                    stroke="#6366f1"
+                    dataKey="design"
+                    stroke="#3b82f6"
                     strokeWidth={3}
+                    name="Input Shirts"
+                  />
+
+                  <Line
+                    type="monotone"
+                    dataKey="press"
+                    stroke="#a855f7"
+                    strokeWidth={3}
+                    name="Output Shirts"
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -219,16 +229,17 @@ export function DashboardOverview() {
           )}
 
           <h1 className='text-lg font-bold mb-4'>Last Month Stats</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {LastMonthStats.map((stat) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {LastMonthStats.map((stat, index) => {
               const Icon = stat.icon;
 
               return (
                 <div
                   key={stat.label}
-                  className="bg-white p-6 rounded-xl shadow-md border-l-4 border-primary"
+                  className={`bg-white p-6 rounded-xl shadow-md border-l-4 border-primary
+        ${index === LastMonthStats.length - 1 ? 'md:col-start-1 md:col-end-3 mx-auto' : ''}`}
                 >
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between gap-30 items-center">
                     <div>
                       <p className="text-gray-600 text-sm">{stat.label}</p>
                       <p className="text-2xl font-bold mt-2">{stat.value}</p>
