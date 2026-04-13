@@ -161,27 +161,18 @@ const DesignDetailPage = ({ designNo }: any) => {
                                         </td>
                                         <td className="px-6 py-4">{entry.operation}</td>
                                         <td className="px-6 py-4">
-                                            {(() => {
-                                                const totalPiece = detail.design.total_piece;
-                                                const diff = totalPiece - entry.piece;
-
-                                                if (entry.piece === totalPiece) {
-                                                    return (
-                                                        <span className="text-green-600 font-semibold">
-                                                            {entry.piece}
-                                                        </span>
-                                                    );
-                                                }
-
-                                                return (
-                                                    <span className="text-red-600 font-semibold">
-                                                        {entry.piece}
-                                                        <span className="ml-2 text-xs font-normal">
-                                                            (-{diff})
-                                                        </span>
+                                            {entry.remaining_piece > 0 ? (
+                                                <span className="text-red-600 font-semibold">
+                                                    {entry.piece}
+                                                    <span className="ml-2 text-xs font-normal">
+                                                        (-{entry.remaining_piece})
                                                     </span>
-                                                );
-                                            })()}
+                                                </span>
+                                            ) : (
+                                                <span className="text-green-600 font-semibold">
+                                                    {entry.piece}
+                                                </span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">₹{entry.rate}</td>
                                         <td className="px-6 py-4 font-semibold">

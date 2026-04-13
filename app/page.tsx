@@ -40,7 +40,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (data.status) {
-        login(email, password); // or store token
+        login(email, password, data.name); // or store token
         router.push("/dashboard");
       } else {
         alert(data.message || "Login failed");

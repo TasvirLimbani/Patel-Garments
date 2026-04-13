@@ -75,7 +75,7 @@ interface AuthContextType {
   user: User | null;
   isLoggedIn: boolean;
   loading: boolean; // 👈 ADD THIS
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string, name: string) => boolean;
   logout: () => void;
 }
 
@@ -96,12 +96,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false); // 👈 VERY IMPORTANT
   }, []);
 
-  const login = (email: string, password: string) => {
+  const login = (email: string, password: string, name: string) => {
     if (email && password) {
       const userData = {
         id: Math.random().toString(36).substr(2, 9),
         email: email,
-        name: email.split('@')[0],
+        name: name,
         token: '', // You can generate a token here if needed
       };
 
