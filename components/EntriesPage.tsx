@@ -346,7 +346,7 @@ export function EntriesPage() {
 
                   {/* Hidden on mobile */}
                   <td className="p-2 sm:p-4 hidden sm:table-cell">{entry.design_no}</td>
-                  <td className="p-2 sm:p-4 hidden sm:table-cell">{entry.colour_no}</td>
+                  <td className="p-2 sm:p-4 hidden sm:table-cell">{entry.colour_no ?? "-"}</td>
 
                   <td className="p-2 sm:p-4">{entry.piece}</td>
                   <td className="p-2 sm:p-4">₹{entry.rate}</td>
@@ -466,7 +466,7 @@ export function EntriesPage() {
 
               <select
                 value={form.operation}
-                onChange={(e) => setForm({ ...form, operation: e.target.value })}
+                onChange={(e) => setForm({ ...form, operation: e.target.value, colour_no: e.target.value === "Press" ? '-' : '' })}
                 className="w-full border p-2 rounded"
               >
                 <option value="">Select Operation</option>
@@ -482,10 +482,12 @@ export function EntriesPage() {
                 onChange={(e) => setForm({ ...form, design_no: e.target.value })}
                 className="w-full border p-2 rounded" />
 
-              <input placeholder="Colour No" value={form.colour_no}
-                onChange={(e) => setForm({ ...form, colour_no: e.target.value })}
-                className="w-full border p-2 rounded" />
-
+              {
+                form.operation !== "Press" ? <input placeholder="Colour No" value={form.colour_no}
+                  onChange={(e) => setForm({ ...form, colour_no: e.target.value })}
+                  className="w-full border p-2 rounded" />  
+              : null 
+              }             
               <input type="number" placeholder="Piece" value={form.piece}
                 onChange={(e) => setForm({ ...form, piece: e.target.value })}
                 className="w-full border p-2 rounded" />
