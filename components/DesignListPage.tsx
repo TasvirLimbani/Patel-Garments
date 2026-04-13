@@ -7,7 +7,8 @@ import {
   CloudSync,
   Eye,
   PencilRuler,
-  Trash2
+  Trash2,
+  Printer,
 
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -128,6 +129,87 @@ const DesignPage = () => {
     });
     setShowModal(true);
   };
+  // 🔥 PRINT FUNCTION
+  const handlePrint = () => {
+    const monthLabel = months.find((m) => m.value === selectedMonth)?.label;
+
+    const printContent = `
+      <html>
+        <head>
+          <title>Salary Report</title>
+          <style>
+            body {
+              font-family: Arial;
+              padding: 20px;
+            }
+            h2 {
+              text-align: center;
+              margin-bottom: 20px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            th, td {
+              border: 1px solid #000;
+              padding: 8px;
+              text-align: center;
+            }
+            th {
+              background: #eee;
+            }
+            .box {
+              width: 40px;
+              height: 25px;
+              border: 1px solid black;
+              margin: auto;
+            }
+          </style>
+        </head>
+        <body>
+          <h2>Salary Report - ${monthLabel} ${selectedYear}</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Design No</th>
+                <th>Colour</th>
+                <th>Total Piece</th>
+                <th>OutPut Piece</th>
+                <th>Remaining Piece</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              ${filteredList
+        .map(
+          (s) => `
+                <tr>
+                  <td>${s.date}</td>
+                  <td>${s.design_number}</td>
+                  <td>${s.color}</td>
+                  <td>${s.piece}</td>
+                  <td>${s.output_piece}</td>
+                  <td>${s.remaining_piece}</td>
+                  <td>${s.reason}</td>
+                </tr>
+              `
+        )
+        .join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+
+    const win = window.open('', '', 'width=900,height=700');
+    win?.document.write(printContent);
+    win?.document.close();
+    win?.print();
+  };
+
 
   const handleEdit = (entry: any) => {
     setEditData(entry);
@@ -338,6 +420,12 @@ const DesignPage = () => {
             >
               + Add
             </button>
+            <button
+              onClick={handlePrint}
+              className="px-5 py-2 bg-primary text-white rounded-lg"
+            >
+              <Printer />
+            </button>
           </div>
 
           {/* 🔥 TABLE */}
@@ -457,8 +545,8 @@ const DesignPage = () => {
               <input placeholder="Colour"
                 value={form.color}
                 onChange={(e) => setForm({ ...form, color: e.target.value })}
-                className="w-full border p-2 rounded" 
-                type='number'/>
+                className="w-full border p-2 rounded"
+                type='number' />
 
               <div>
                 <h1 className="text-md font-bold text-primary/70">Images</h1>

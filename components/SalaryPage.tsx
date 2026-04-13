@@ -14,27 +14,27 @@ export function SalaryPage() {
   const [salarys, setSalary] = useState<Salary[]>([]);
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
-     const [employeesLoading, setEmployeesLoading] = useState(true);
+  const [employeesLoading, setEmployeesLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
 
   // FETCH
-const fetchSalaries = async () => {
-  try {
-    setEmployeesLoading(true);
+  const fetchSalaries = async () => {
+    try {
+      setEmployeesLoading(true);
 
-    const res = await fetch('/api/salary', {
-      cache: 'no-store',
-    });
+      const res = await fetch('/api/salary', {
+        cache: 'no-store',
+      });
 
-    const data = await res.json();
-    setSalary(data.data);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setEmployeesLoading(false);
-  }
-};
+      const data = await res.json();
+      setSalary(data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setEmployeesLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchSalaries();
@@ -132,8 +132,8 @@ const fetchSalaries = async () => {
                   <td>${s.employee_id}</td>
                   <td>${s.employee_name}</td>
                   <td>₹${s.total_salary}</td>
-                  <td>₹${s.total_advance}</td>
-                  <td>₹${s.payable}</td>
+                  <td>₹${(s.total_advance - s.previous_balance) ?? 0}</td>
+                  <td>₹${s.final_payable}</td>
                   <td>${s.account_number}</td>
                   <td>${s.bank_name}</td>
                   <td><div class="box"></div></td>
@@ -153,16 +153,16 @@ const fetchSalaries = async () => {
     win?.print();
   };
 
-    if (employeesLoading) {
-  return (
-    <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
-                <div className="flex flex-col items-center gap-3 pl-56">
-                  <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-sm text-primary">Loading data...</p>
-                </div>
-              </div>
-  );
-}
+  if (employeesLoading) {
+    return (
+      <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
+        <div className="flex flex-col items-center gap-3 pl-56">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm text-primary">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -255,11 +255,11 @@ const fetchSalaries = async () => {
                   </td>
 
                   <td className="px-6 py-4 text-red-600">
-                    ₹{salary.total_advance}
+                    ₹{(salary.total_advance - salary.previous_balance) ?? 0}
                   </td>
 
                   <td className="px-6 py-4 font-bold text-primary">
-                    ₹{salary.payable}
+                    ₹{salary.final_payable  }
                   </td>
 
                   <td className="px-6 py-4">

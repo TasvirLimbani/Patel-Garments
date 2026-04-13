@@ -29,6 +29,8 @@ export interface Salary {
   total_paid: string;
   total_advance: string;
   payable: string;
+  previous_balance?: number; // Optional field for previous balance
+  final_payable?: number; // Optional field for final payable amount after adjusting advances
 }
 
 export interface Entry {
