@@ -43,6 +43,9 @@ export function EntriesPage() {
   const [deleteEntry, setDeleteEntry] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
     employee_name: '',
@@ -98,6 +101,13 @@ export function EntriesPage() {
 
     return matchesSearch && matchesDate;
   });
+
+  const totalPages = Math.ceil(filteredEntries.length / itemsPerPage);
+
+  const paginatedEntries = filteredEntries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleEmployeeSearch = (value: string) => {
     setForm({ ...form, employee_id: value }); // ✅ correct
@@ -332,7 +342,7 @@ export function EntriesPage() {
             </thead>
 
             <tbody>
-              {filteredEntries.map((entry) => (
+              {paginatedEntries.map((entry) => (
                 <tr key={entry.id} className="border-t text-center">
                   <td className="p-2 sm:p-4 whitespace-nowrap">{entry.date}</td>
 
@@ -395,6 +405,47 @@ export function EntriesPage() {
               ))}
             </tbody>
           </table>
+        <div className="flex justify-between items-center px-4 py-3">
+
+          {/* LEFT: INFO */}
+          <div className="text-sm text-gray-500">
+            Page {currentPage} of {totalPages}
+          </div>
+
+          {/* RIGHT: BUTTONS */}
+          <div className="flex gap-2">
+
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 border rounded ${currentPage === i + 1
+                    ? 'bg-primary text-white'
+                    : ''
+                  }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+
+          </div>
+        </div>
         </div>
       </div>
 
@@ -485,9 +536,9 @@ export function EntriesPage() {
               {
                 form.operation !== "Press" ? <input placeholder="Colour No" value={form.colour_no}
                   onChange={(e) => setForm({ ...form, colour_no: e.target.value })}
-                  className="w-full border p-2 rounded" />  
-              : null 
-              }             
+                  className="w-full border p-2 rounded" />
+                  : null
+              }
               <input type="number" placeholder="Piece" value={form.piece}
                 onChange={(e) => setForm({ ...form, piece: e.target.value })}
                 className="w-full border p-2 rounded" />

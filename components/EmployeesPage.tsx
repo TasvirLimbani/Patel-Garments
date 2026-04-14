@@ -35,6 +35,9 @@ export function EmployeesPage() {
   const [deleteEmployee, setDeleteEmployee] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
   const getCurrentMonth = () => {
     const d = new Date();
     return d.toISOString().slice(0, 7); // "YYYY-MM"
@@ -264,6 +267,13 @@ export function EmployeesPage() {
     emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || emp.employee_number.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
+
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   if (employeesLoading) {
     return (
       <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
@@ -316,7 +326,7 @@ export function EmployeesPage() {
                 </thead>
 
                 <tbody>
-                  {filteredEmployees.map((emp: any) => (
+                  {paginatedEmployees.map((emp: any) => (
                     <tr
                       key={emp.id}
                       className="border-t hover:bg-gray-50 cursor-pointer"
@@ -383,6 +393,47 @@ export function EmployeesPage() {
                   ))}
                 </tbody>
               </table>
+              <div className="flex justify-between items-center px-4 py-3">
+
+                {/* LEFT */}
+                <div className="text-sm text-gray-500">
+                  Page {currentPage} of {totalPages}
+                </div>
+
+                {/* RIGHT */}
+                <div className="flex gap-2">
+
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage((prev) => prev - 1)}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                  >
+                    Prev
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-3 py-1 border rounded ${currentPage === i + 1
+                          ? 'bg-primary text-white'
+                          : ''
+                        }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage((prev) => prev + 1)}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+
+                </div>
+              </div>
             </div>
           </div>
         </>

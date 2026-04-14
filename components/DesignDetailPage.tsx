@@ -121,18 +121,24 @@ const DesignDetailPage = ({ designNo }: any) => {
 
                     <div className="bg-white p-2 rounded-xl shadow flex flex-col">
                         <div className="flex gap-2 flex-nowrap flex-1 items-start">
-                            {images.map((img, index) => (
-                                <img
-                                    key={index}
-                                    src={`/api/proxy-image?url=${encodeURIComponent(img)}`}
-                                    alt={`design-${index}`}
-                                    onClick={() => {
-                                        setActiveIndex(index);
-                                        setShowPreview(true);
-                                    }}
-                                    className="w-18 h-18 object-cover rounded-lg border cursor-pointer hover:scale-105 transition"
-                                />
-                            ))}
+                            {images.length > 0 ? (
+                                images.map((img, index) => (
+                                    <img
+                                        key={index}
+                                        src={`/api/proxy-image?url=${encodeURIComponent(img)}`}
+                                        alt={`design-${index}`}
+                                        onClick={() => {
+                                            setActiveIndex(index);
+                                            setShowPreview(true);
+                                        }}
+                                        className="w-18 h-18 object-cover rounded-lg border cursor-pointer hover:scale-105 transition"
+                                    />
+                                ))
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm italic py-6">
+                                    No Image
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

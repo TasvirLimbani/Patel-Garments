@@ -17,6 +17,8 @@ export function SalaryPage() {
   const [employeesLoading, setEmployeesLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   // FETCH
   const fetchSalaries = async () => {
@@ -51,6 +53,13 @@ export function SalaryPage() {
 
     return matchesSearch && matchesDate;
   });
+
+  const totalPages = Math.ceil(filteredSalaries.length / itemsPerPage);
+
+  const paginatedSalaries = filteredSalaries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // MONTHS
   const months = [
@@ -239,7 +248,7 @@ export function SalaryPage() {
             </thead>
 
             <tbody className="divide-y divide-gray-200">
-              {filteredSalaries.map((salary, index) => (
+              {paginatedSalaries.map((salary, index) => (
                 <tr
                   key={salary.employee_id}
                   className="hover:bg-gray-50 transition-colors duration-200 text-center"
@@ -259,7 +268,7 @@ export function SalaryPage() {
                   </td>
 
                   <td className="px-6 py-4 font-bold text-primary">
-                    ₹{salary.final_payable  }
+                    ₹{salary.final_payable}
                   </td>
 
                   <td className="px-6 py-4">
@@ -281,6 +290,48 @@ export function SalaryPage() {
               No salary data for selected month/year
             </div>
           )}
+
+          <div className="flex justify-between items-center px-4 py-3">
+
+            {/* LEFT */}
+            <div className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages}
+            </div>
+
+            {/* RIGHT */}
+            <div className="flex gap-2 flex-wrap">
+
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-1 border rounded ${currentPage === i + 1
+                    ? 'bg-primary text-white'
+                    : ''
+                    }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+
+            </div>
+          </div>
         </div>
       </div>
     </div>

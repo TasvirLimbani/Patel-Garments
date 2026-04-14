@@ -33,6 +33,9 @@ export function AdvancesPage() {
   const [deleteAdvance, setDeleteAdvance] = useState<Advance | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
   const [form, setForm] = useState({
     date: today,
     employee_name: '',
@@ -76,6 +79,13 @@ export function AdvancesPage() {
     }
     return d.date === startDate;
   });
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleEmployeeSearch = (value: string) => {
     setForm({
@@ -308,8 +318,8 @@ export function AdvancesPage() {
             </thead>
 
             <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((entry) => (
+              {paginatedData.length > 0 ? (
+                paginatedData.map((entry) => (
                   <tr key={entry.id} className="border-t text-center">
 
                     <td className="p-2 sm:p-4 whitespace-nowrap">
@@ -379,6 +389,47 @@ export function AdvancesPage() {
               )}
             </tbody>
           </table>
+          <div className="flex justify-between items-center px-4 py-3">
+
+            {/* LEFT */}
+            <div className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages}
+            </div>
+
+            {/* RIGHT */}
+            <div className="flex gap-2 flex-wrap">
+
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => prev - 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Prev
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-1 border rounded ${currentPage === i + 1
+                      ? 'bg-primary text-white'
+                      : ''
+                    }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage((prev) => prev + 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+
+            </div>
+          </div>
         </div>
       </div>
 
