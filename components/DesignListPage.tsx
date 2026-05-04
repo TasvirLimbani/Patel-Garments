@@ -22,6 +22,8 @@ const DesignPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [images, setImages] = useState<File[]>([]);
 
+  
+
   const [form, setForm] = useState({
     name: '',
     operation: '',
@@ -60,7 +62,43 @@ const DesignPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
+  
   const itemsPerPage = 20;
+
+function getPaginationRange(currentPage: number, totalPages: number) {
+  const siblingCount = 1;
+  const range: (number | string)[] = [];
+
+  const left = Math.max(currentPage - siblingCount, 1);
+  const right = Math.min(currentPage + siblingCount, totalPages);
+
+  // First page
+  if (left > 1) {
+    range.push(1);
+  }
+
+  // Left dots
+  if (left > 2) {
+    range.push("...");
+  }
+
+  // Middle pages
+  for (let i = left; i <= right; i++) {
+    range.push(i);
+  }
+
+  // Right dots
+  if (right < totalPages - 1) {
+    range.push("...");
+  }
+
+  // Last page
+  if (right < totalPages) {
+    range.push(totalPages);
+  }
+
+  return range;
+}
 
   // 👉 FETCH LIST
   const fetchList = async () => {
@@ -95,12 +133,26 @@ const DesignPage = () => {
     return matchesSearch && matchesDate;
   });
 
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
-  const paginatedList = filteredList.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+
+const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+
+const paginatedList = filteredList.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
+
+const paginationRange = getPaginationRange(currentPage, totalPages);
+
+useEffect(() => {
+  setCurrentPage(1);
+}, [searchTerm, selectedMonth, selectedYear]);
+
+useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(totalPages || 1);
+  }
+}, [totalPages]);
 
   // 🔥 MONTHS
   const months = [
@@ -513,46 +565,56 @@ const DesignPage = () => {
                 </tbody>
               </table>
 
-              <div className="flex justify-between items-center px-4 py-3">
+         <div className="flex justify-between items-center px-4 py-3">
 
-                {/* LEFT */}
-                <div className="text-sm text-gray-500">
-                  Page {currentPage} of {totalPages}
-                </div>
+  <div className="text-sm text-gray-500">
+    Page {currentPage} of {totalPages || 1}
+  </div>
 
-                {/* RIGHT */}
-                <div className="flex gap-2">
+  <div className="flex gap-2 items-center flex-wrap">
 
-                  <button
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage((prev) => prev - 1)}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
-                  >
-                    Prev
-                  </button>
+    <button
+      disabled={currentPage === 1}
+      onClick={() => setCurrentPage(prev => prev - 1)}
+      className="px-3 py-1 border rounded disabled:opacity-50"
+    >
+      Prev
+    </button>
 
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentPage(i + 1)}
-                      className={`px-3 py-1 border rounded ${currentPage === i + 1
-                        ? 'bg-primary text-white'
-                        : ''
-                        }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
+    {paginationRange.map((page, index) => {
+      if (page === "...") {
+        return (
+          <span key={index} className="px-2 text-gray-400">
+            ...
+          </span>
+        );
+      }
 
-                  <button
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    onClick={() => setCurrentPage((prev) => prev + 1)}
-                    className="px-3 py-1 border rounded disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
+      return (
+        <button
+          key={`${page}-${index}`}
+          onClick={() => setCurrentPage(Number(page))}
+          className={`px-3 py-1 border rounded ${
+            currentPage === page
+              ? 'bg-primary text-white'
+              : 'hover:bg-gray-100'
+          }`}
+        >
+          {page}
+        </button>
+      );
+    })}
+
+    <button
+      disabled={currentPage === totalPages || totalPages === 0}
+      onClick={() => setCurrentPage(prev => prev + 1)}
+      className="px-3 py-1 border rounded disabled:opacity-50"
+    >
+      Next
+    </button>
+
+  </div>
+</div>
 
               {/* EMPTY */}
               {filteredList.length === 0 && !loading && (

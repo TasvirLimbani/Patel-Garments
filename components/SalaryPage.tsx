@@ -20,6 +20,36 @@ export function SalaryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
+  function getPaginationRange(currentPage: number, totalPages: number) {
+    const siblingCount = 1;
+    const range: (number | string)[] = [];
+
+    const left = Math.max(currentPage - siblingCount, 1);
+    const right = Math.min(currentPage + siblingCount, totalPages);
+
+    if (left > 1) {
+      range.push(1);
+    }
+
+    if (left > 2) {
+      range.push("...");
+    }
+
+    for (let i = left; i <= right; i++) {
+      range.push(i);
+    }
+
+    if (right < totalPages - 1) {
+      range.push("...");
+    }
+
+    if (right < totalPages) {
+      range.push(totalPages);
+    }
+
+    return range;
+  }
+
   // FETCH
   const fetchSalaries = async () => {
     try {
@@ -61,6 +91,15 @@ export function SalaryPage() {
     currentPage * itemsPerPage
   );
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages || 1);
+    }
+  }, [totalPages]);
   // MONTHS
   const months = [
     { value: '1', label: 'Jan' },
@@ -309,18 +348,28 @@ export function SalaryPage() {
                 Prev
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 border rounded ${currentPage === i + 1
-                    ? 'bg-primary text-white'
-                    : ''
-                    }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              {getPaginationRange(currentPage, totalPages).map((page, index) => {
+                if (page === "...") {
+                  return (
+                    <span key={index} className="px-2 text-gray-400">
+                      ...
+                    </span>
+                  );
+                }
+
+                return (
+                  <button
+                    key={`${page}-${index}`}
+                    onClick={() => setCurrentPage(Number(page))}
+                    className={`px-3 py-1 border rounded ${currentPage === page
+                      ? 'bg-primary text-white'
+                      : 'hover:bg-gray-100'
+                      }`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
 
               <button
                 disabled={currentPage === totalPages || totalPages === 0}
