@@ -18,6 +18,9 @@ const operations = [
   'Bottom',
   'Press',
   'Gaj Button',
+  'Shoulder',
+  'Sample',
+  'Alter',
 ];
 
 export function EmployeesPage() {

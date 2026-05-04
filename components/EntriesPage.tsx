@@ -17,6 +17,9 @@ const operations = [
   'Bottom',
   'Gaj Button',
   'Press',
+  'Shoulder',
+  'Sample',
+  'Alter'
 ];
 
 export function EntriesPage() {
