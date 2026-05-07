@@ -17,9 +17,11 @@ const operations = [
   'Bottom',
   'Gaj Button',
   'Press',
+  'Overlock',
   'Shoulder',
   'Sample',
-  'Alter'
+  'Alter',
+  'Cutting'
 ];
 
 export function EntriesPage() {

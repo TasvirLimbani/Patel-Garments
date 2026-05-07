@@ -18,9 +18,11 @@ const operations = [
   'Bottom',
   'Press',
   'Gaj Button',
+  'Overlock',
   'Shoulder',
   'Sample',
   'Alter',
+  'Cutting'
 ];
 
 export function EmployeesPage() {
