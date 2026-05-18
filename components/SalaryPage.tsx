@@ -299,7 +299,7 @@ export function SalaryPage() {
                   </td>
 
                   <td className="px-6 py-4">
-                    ₹{salary.total_salary}
+                    ₹{(Number(salary?.total_salary || 0) + Number(salary.total_expense || 0)).toFixed(2)}
                   </td>
 
                   <td className="px-6 py-4 text-red-600">
