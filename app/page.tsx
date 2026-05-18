@@ -40,7 +40,13 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (data.status) {
-        login(email, password, data.name); // or store token
+        login({
+          id: data.data?.id || '',
+          email: data.data?.email || email,
+          name: data.data?.name || '',
+          role: data.data?.role || '',
+          token: data.data?.token || '',
+        });
         router.push("/dashboard");
       } else {
         alert(data.message || "Login failed");

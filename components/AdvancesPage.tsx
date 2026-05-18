@@ -90,10 +90,14 @@ export function AdvancesPage() {
       setEmployeesLoading(true); // start loading
 
       const res = await fetch('/api/employee');
+      const rress = await fetch('/api/fixEmployee');
       const data = await res.json();
+      const dataa = await rress.json();
 
       if (data.success) {
-        setEmployeeList(data.employees);
+       const dataaa=  data.employees.concat(dataa.employees);
+        setEmployeeList(dataaa);
+        
       }
     } catch (err) {
       console.error(err);
@@ -152,7 +156,7 @@ export function AdvancesPage() {
     const payload = {
       date: form.date,
       employee_name: form.employee_name,
-      employee_id: Number(form.employee_id),
+      employee_id: form.employee_id,
       amount: Number(form.amount),
       reason: form.reason, // ✅ NEW
       ...(editData && { id: editData.id }),

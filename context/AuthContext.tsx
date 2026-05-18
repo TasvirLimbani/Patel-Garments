@@ -1,59 +1,3 @@
-// 'use client';
-
-// import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-// export interface User {
-//   id: string;
-//   email: string;
-//   name: string;
-//   token: string;
-// }
-
-// interface AuthContextType {
-//   user: User | null;
-//   isLoggedIn: boolean;
-//   login: (email: string, password: string) => boolean;
-//   logout: () => void;
-// }
-
-// const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-// export function AuthProvider({ children }: { children: ReactNode }) {
-//   const [user, setUser] = useState<User | null>(null);
-
-//   const login = (email: string, password: string) => {
-//     // Mock authentication - accept any email/password combination
-//     if (email && password) {
-//       setUser({
-//         id: Math.random().toString(36).substr(2, 9),
-//         email,
-//         name: email.split('@')[0],
-//         token: '',
-//       });
-//       return true;
-//     }
-//     return false;
-//   };
-
-//   const logout = () => {
-//     setUser(null);
-//   };
-
-//   return (
-//     <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// }
-
-// export function useAuth() {
-//   const context = useContext(AuthContext);
-//   if (context === undefined) {
-//     throw new Error('useAuth must be used within AuthProvider');
-//   }
-//   return context;
-// }
-
 'use client';
 
 import React, {
@@ -68,6 +12,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  role: string;
   token: string;
 }
 
@@ -75,7 +20,7 @@ interface AuthContextType {
   user: User | null;
   isLoggedIn: boolean;
   loading: boolean; // 👈 ADD THIS
-  login: (email: string, password: string, name: string) => boolean;
+  login: (userData: User) => boolean;
   logout: () => void;
 }
 
@@ -90,21 +35,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedUser = localStorage.getItem("user");
 
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser({
+        id: parsedUser.id || '',
+        email: parsedUser.email || '',
+        name: parsedUser.name || '',
+        role: parsedUser.role || '',
+        token: parsedUser.token || '',
+      });
     }
 
     setLoading(false); // 👈 VERY IMPORTANT
   }, []);
 
-  const login = (email: string, password: string, name: string) => {
-    if (email && password) {
-      const userData = {
-        id: Math.random().toString(36).substr(2, 9),
-        email: email,
-        name: name,
-        token: '', // You can generate a token here if needed
-      };
-
+  const login = (userData: User) => {
+    if (userData?.email) {
       setUser(userData);
       localStorage.setItem("user", JSON.stringify(userData));
 

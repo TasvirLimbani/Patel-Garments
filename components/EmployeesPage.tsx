@@ -22,7 +22,8 @@ const operations = [
   'Shoulder',
   'Sample',
   'Alter',
-  'Cutting'
+  'Cutting',
+  'Outward',
 ];
 
 export function EmployeesPage() {

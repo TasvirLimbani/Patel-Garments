@@ -27,6 +27,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
     { id: 'employees', label: 'Employees', icon: Users, href: '/employees' },
+    {id: 'fixemployees', label: 'Fix Employees', icon: Users, href: '/fixemployees' },
     { id: 'design', label: 'Design', icon: PencilRuler, href: '/design' },
     { id: 'entries', label: 'Work Entries', icon: LogIn, href: '/entries' },
     { id: 'advances', label: 'Advances', icon: TrendingUp, href: '/advances' },
