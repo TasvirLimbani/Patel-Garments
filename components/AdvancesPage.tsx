@@ -366,7 +366,7 @@ export function AdvancesPage() {
                   <tr key={entry.id} className="border-t text-center">
 
                     <td className="p-2 sm:p-4 whitespace-nowrap">
-                      {entry.date}
+                     {new Date(entry.date).toLocaleDateString('en-GB').replace(/\//g, '-')}
                     </td>
 
                     <td className="p-2 sm:p-4 whitespace-nowrap">

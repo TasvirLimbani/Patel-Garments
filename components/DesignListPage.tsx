@@ -515,7 +515,7 @@ useEffect(() => {
                       key={i}
                       className="hover:bg-gray-50 cursor-pointer transition"
                     >
-                      <td className="px-6 py-4">{item.date}</td>
+                      <td className="px-6 py-4">{new Date(item.date).toLocaleDateString('en-GB').replace(/\//g, '-')}</td>
                       <td className="px-6 py-4 font-semibold text-primary">
                         {item.design_number}
                       </td>
