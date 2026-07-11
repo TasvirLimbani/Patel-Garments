@@ -62,6 +62,28 @@ const DesignDetailPage = ({ designNo }: any) => {
         }
     };
 
+    const uniqueOperationPrice =
+        detail?.entries?.reduce(
+            (acc: { total: number; operations: Set<string> }, entry: any) => {
+                const operation = entry.operation.trim().toLowerCase();
+
+                if (!acc.operations.has(operation)) {
+                    acc.operations.add(operation);
+                    acc.total += Number(entry.rate || 0);
+                }
+
+                return acc;
+            },
+            {
+                total: 0,
+                operations: new Set<string>(),
+            }
+        ).total ?? 0;
+
+    const onePiecePrice =
+        Number(detail?.design?.one_piece_price || 0) > 0
+            ? Number(detail.design.one_piece_price)
+            : uniqueOperationPrice;
     if (loading) return <div className="h-full absolute inset-0 flex items-center justify-center backdrop-blur-sm z-0">
         <div className="flex flex-col items-center gap-3 pl-56">
             <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -101,14 +123,14 @@ const DesignDetailPage = ({ designNo }: any) => {
                     <div className="bg-white p-5 rounded-xl shadow">
                         <p className="text-gray-500 text-sm">Grand Total</p>
                         <p className="text-xl font-bold text-green-600">
-                            ₹{detail.design.total_cost}
+                            ₹{detail.design.total_cost?.toFixed(2)}
                         </p>
                     </div>
 
                     <div className="bg-white p-5 rounded-xl shadow">
                         <p className="text-gray-500 text-sm">Per piece price</p>
                         <p className="text-xl font-bold text-blue-600">
-                            ₹{detail.design.one_piece_price}
+                            ₹{onePiecePrice.toFixed(2)}
                         </p>
                     </div>
 

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Value } from '@radix-ui/react-select';
 
 const DesignPage = () => {
   const [list, setList] = useState([]);
@@ -22,7 +23,7 @@ const DesignPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [images, setImages] = useState<File[]>([]);
 
-  
+
 
   const [form, setForm] = useState({
     name: '',
@@ -62,43 +63,43 @@ const DesignPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const itemsPerPage = 20;
 
-function getPaginationRange(currentPage: number, totalPages: number) {
-  const siblingCount = 1;
-  const range: (number | string)[] = [];
+  function getPaginationRange(currentPage: number, totalPages: number) {
+    const siblingCount = 1;
+    const range: (number | string)[] = [];
 
-  const left = Math.max(currentPage - siblingCount, 1);
-  const right = Math.min(currentPage + siblingCount, totalPages);
+    const left = Math.max(currentPage - siblingCount, 1);
+    const right = Math.min(currentPage + siblingCount, totalPages);
 
-  // First page
-  if (left > 1) {
-    range.push(1);
+    // First page
+    if (left > 1) {
+      range.push(1);
+    }
+
+    // Left dots
+    if (left > 2) {
+      range.push("...");
+    }
+
+    // Middle pages
+    for (let i = left; i <= right; i++) {
+      range.push(i);
+    }
+
+    // Right dots
+    if (right < totalPages - 1) {
+      range.push("...");
+    }
+
+    // Last page
+    if (right < totalPages) {
+      range.push(totalPages);
+    }
+
+    return range;
   }
-
-  // Left dots
-  if (left > 2) {
-    range.push("...");
-  }
-
-  // Middle pages
-  for (let i = left; i <= right; i++) {
-    range.push(i);
-  }
-
-  // Right dots
-  if (right < totalPages - 1) {
-    range.push("...");
-  }
-
-  // Last page
-  if (right < totalPages) {
-    range.push(totalPages);
-  }
-
-  return range;
-}
 
   // 👉 FETCH LIST
   const fetchList = async () => {
@@ -126,49 +127,54 @@ function getPaginationRange(currentPage: number, totalPages: number) {
     // 📅 month/year filter
     const d = new Date(item.date);
 
-    const matchesDate =
-      String(d.getMonth() + 1) === selectedMonth &&
+    const matchesYear =
       String(d.getFullYear()) === selectedYear;
 
+    const matchesMonth =
+      selectedMonth === "all" ||
+      String(d.getMonth() + 1) === selectedMonth;
+
+    const matchesDate = matchesYear && matchesMonth;
     return matchesSearch && matchesDate;
   });
 
 
 
-const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
 
-const paginatedList = filteredList.slice(
-  (currentPage - 1) * itemsPerPage,
-  currentPage * itemsPerPage
-);
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
-const paginationRange = getPaginationRange(currentPage, totalPages);
+  const paginationRange = getPaginationRange(currentPage, totalPages);
 
-useEffect(() => {
-  setCurrentPage(1);
-}, [searchTerm, selectedMonth, selectedYear]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedMonth, selectedYear]);
 
-useEffect(() => {
-  if (currentPage > totalPages) {
-    setCurrentPage(totalPages || 1);
-  }
-}, [totalPages]);
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages || 1);
+    }
+  }, [totalPages]);
 
   // 🔥 MONTHS
   const months = [
-    { value: '1', label: 'Jan' },
-    { value: '2', label: 'Feb' },
-    { value: '3', label: 'Mar' },
-    { value: '4', label: 'Apr' },
-    { value: '5', label: 'May' },
-    { value: '6', label: 'Jun' },
-    { value: '7', label: 'Jul' },
-    { value: '8', label: 'Aug' },
-    { value: '9', label: 'Sep' },
-    { value: '10', label: 'Oct' },
-    { value: '11', label: 'Nov' },
-    { value: '12', label: 'Dec' },
-  ];
+  { value: 'all', label: 'All Months' },
+  { value: '1', label: 'Jan' },
+  { value: '2', label: 'Feb' },
+  { value: '3', label: 'Mar' },
+  { value: '4', label: 'Apr' },
+  { value: '5', label: 'May' },
+  { value: '6', label: 'Jun' },
+  { value: '7', label: 'Jul' },
+  { value: '8', label: 'Aug' },
+  { value: '9', label: 'Sep' },
+  { value: '10', label: 'Oct' },
+  { value: '11', label: 'Nov' },
+  { value: '12', label: 'Dec' },
+];
 
   const years = [
     ...new Set(
@@ -565,56 +571,55 @@ useEffect(() => {
                 </tbody>
               </table>
 
-         <div className="flex justify-between items-center px-4 py-3">
+              <div className="flex justify-between items-center px-4 py-3">
 
-  <div className="text-sm text-gray-500">
-    Page {currentPage} of {totalPages || 1}
-  </div>
+                <div className="text-sm text-gray-500">
+                  Page {currentPage} of {totalPages || 1}
+                </div>
 
-  <div className="flex gap-2 items-center flex-wrap">
+                <div className="flex gap-2 items-center flex-wrap">
 
-    <button
-      disabled={currentPage === 1}
-      onClick={() => setCurrentPage(prev => prev - 1)}
-      className="px-3 py-1 border rounded disabled:opacity-50"
-    >
-      Prev
-    </button>
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(prev => prev - 1)}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                  >
+                    Prev
+                  </button>
 
-    {paginationRange.map((page, index) => {
-      if (page === "...") {
-        return (
-          <span key={index} className="px-2 text-gray-400">
-            ...
-          </span>
-        );
-      }
+                  {paginationRange.map((page, index) => {
+                    if (page === "...") {
+                      return (
+                        <span key={index} className="px-2 text-gray-400">
+                          ...
+                        </span>
+                      );
+                    }
 
-      return (
-        <button
-          key={`${page}-${index}`}
-          onClick={() => setCurrentPage(Number(page))}
-          className={`px-3 py-1 border rounded ${
-            currentPage === page
-              ? 'bg-primary text-white'
-              : 'hover:bg-gray-100'
-          }`}
-        >
-          {page}
-        </button>
-      );
-    })}
+                    return (
+                      <button
+                        key={`${page}-${index}`}
+                        onClick={() => setCurrentPage(Number(page))}
+                        className={`px-3 py-1 border rounded ${currentPage === page
+                          ? 'bg-primary text-white'
+                          : 'hover:bg-gray-100'
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
 
-    <button
-      disabled={currentPage === totalPages || totalPages === 0}
-      onClick={() => setCurrentPage(prev => prev + 1)}
-      className="px-3 py-1 border rounded disabled:opacity-50"
-    >
-      Next
-    </button>
+                  <button
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    onClick={() => setCurrentPage(prev => prev + 1)}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                  >
+                    Next
+                  </button>
 
-  </div>
-</div>
+                </div>
+              </div>
 
               {/* EMPTY */}
               {filteredList.length === 0 && !loading && (
