@@ -576,6 +576,7 @@ export function AdvancesPage() {
                 <option value="Room Rent">Room Rent</option>
                 <option value="Advance">Advance</option>
                 <option value="Room Rent + Advance">Room Rent + Advance</option>
+                <option value="Other">Salary</option>
               </select>
 
             </div>
