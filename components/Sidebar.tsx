@@ -30,7 +30,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     {id: 'fixemployees', label: 'Fix Employees', icon: Users, href: '/fixemployees' },
     { id: 'design', label: 'Design', icon: PencilRuler, href: '/design' },
     { id: 'entries', label: 'Work Entries', icon: LogIn, href: '/entries' },
-    { id: 'advances', label: 'Advances', icon: TrendingUp, href: '/advances' },
+    { id: 'advances', label: 'Payments', icon: TrendingUp, href: '/advances' },
     { id: 'salary', label: 'Salary', icon: DollarSign, href: '/salary' },
   ];
 
